@@ -33,6 +33,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BandDark: 0.35
+    - _BandHeight: 0.08
+    - _BandSpeed: 0.18
     - _BleedAmount: 0.005
     - _ChromaticAberration: 0.03
     - _ChromaticShift: 0.01
@@ -40,14 +43,23 @@ Material:
     - _Distortion: 0.1
     - _FisheyeBend: 0.2
     - _GlitchAmount: 0.05
+    - _GlitchBrightness: 0.38
+    - _GlitchDensity: 0
     - _GlitchIntensity: 0.1
+    - _GlitchLineLength: 0.5
+    - _GlitchRowScale: 400
+    - _HeavyGlitchActive: 0.1
+    - _HeavyGlitchTime: 10
     - _MotionBlur: 0.3
     - _NoiseAmount: 0.05
     - _NoiseIntensity: 0.3
     - _Saturation: 0.85
+    - _ScanlineCount: 240
+    - _ScanlineDark: 0.25
     - _ScanlineFrequency: 200
     - _ScanlineIntensity: 0.5
-    - _TimeSpeed: 1
+    - _ScanlineSpeed: 0.4
+    - _TimeSpeed: 0.5
     - _Vignette: 0.3
     - _VignetteAmount: 0.3
     m_Colors: []
