@@ -1,40 +1,47 @@
-﻿using UnityEngine;
-using UnityEngine.UI; // Cần thiết để khai báo kiểu Button
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class MainMenuController : MonoBehaviour
 {
     [Header("UI Panels")]
-    [SerializeField] private GameObject menuPanel;     // GameObject 'Menu'
-    [SerializeField] private GameObject mainHUDPanel;  // UI chính trong game (thanh máu, HUD...)
+    [SerializeField] private GameObject menuPanel;
+    [SerializeField] private GameObject mainHUDPanel;
 
     [Header("UI Buttons")]
-    [SerializeField] private Button newGameBtn;        // Drag 'Button' (New Game) vào đây
-    [SerializeField] private Button loadGameBtn;       // Drag 'Button (2)' (Load Game) vào đây
-    [SerializeField] private Button quitBtn;           // Drag 'Button (1)' (Quit) vào đây
+    [SerializeField] private Button newGameBtn;
+    [SerializeField] private Button loadGameBtn;
+    [SerializeField] private Button quitBtn;
 
     [Header("Cameras & World")]
-    [SerializeField] private GameObject menuCam;       // GameObject 'Menu cam'
-    [SerializeField] private GameObject playerObj;     // GameObject 'Player'
+    [SerializeField] private GameObject menuCam;
+    [SerializeField] private GameObject playerObj;
+
+    [Header("Intro Video Setup")]
+    [SerializeField] private VideoPlayer introVideoPlayer;
+    [SerializeField] private RawImage videoRawImage;
+    [SerializeField] private bool allowSkipVideo = true;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource ambientAudio; // GameObject 'ambient'
-    [SerializeField] private AudioSource buttonSFX;    // Tiếng click nút (nếu có)
+    [SerializeField] private AudioSource ambientAudio;
+    [SerializeField] private AudioSource buttonSFX;
+
+    private bool isPlayingVideo = false;
 
     private void Start()
     {
-        // 1. Gán sự kiện cho các nút bằng Code (Không cần chỉnh On Click trong Inspector nữa)
         if (newGameBtn != null) newGameBtn.onClick.AddListener(OnNewGameClicked);
         if (loadGameBtn != null) loadGameBtn.onClick.AddListener(OnLoadGameClicked);
         if (quitBtn != null) quitBtn.onClick.AddListener(OnQuitClicked);
 
-        // 2. Trạng thái ban đầu khi ở Menu
         if (menuPanel != null) menuPanel.SetActive(true);
         if (mainHUDPanel != null) mainHUDPanel.SetActive(false);
+        if (videoRawImage != null) videoRawImage.enabled = false;
 
         if (menuCam != null) menuCam.SetActive(true);
         if (playerObj != null) playerObj.SetActive(false);
 
-        // Bật chuột để bấm Menu
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -42,22 +49,87 @@ public class MainMenuController : MonoBehaviour
             ambientAudio.Play();
     }
 
-    // --- CÁC HÀM XỬ LÝ LOGIC ---
+    private void Update()
+    {
+        if (isPlayingVideo && allowSkipVideo)
+        {
+            if (Input.GetKeyDown(KeyCode.Space)
+             || Input.GetKeyDown(KeyCode.Escape)
+             || Input.GetMouseButtonDown(0))
+            {
+                StopAllCoroutines();
+                EndIntroVideo();
+            }
+        }
+    }
 
     public void OnNewGameClicked()
     {
         PlaySound();
 
-        // Tắt Menu & MenuCam, Bật HUD & Player
+        if (introVideoPlayer != null)
+            StartCoroutine(PlayVideoSequence());
+        else
+            StartGameDirectly();
+    }
+
+    private IEnumerator PlayVideoSequence()
+    {
+        isPlayingVideo = true;
+
+        if (ambientAudio != null) ambientAudio.Stop();
+        if (videoRawImage != null) videoRawImage.enabled = true;
+
+        introVideoPlayer.Play();
+
+        yield return null;
+        yield return null;
+        yield return null;
+
+        float timeout = 5f;
+        while (introVideoPlayer.length <= 0 && timeout > 0)
+        {
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+
+        float videoDuration = (float)introVideoPlayer.length;
+        Debug.Log($"[Menu] Video duration: {videoDuration}s");
+
+        if (videoDuration > 0)
+            yield return new WaitForSeconds(videoDuration);
+        else
+            Debug.LogWarning("[Menu] Không đọc được duration, bỏ qua video.");
+
+        EndIntroVideo();
+    }
+
+    private void EndIntroVideo()
+    {
+        if (introVideoPlayer != null && introVideoPlayer.isPlaying)
+            introVideoPlayer.Stop();
+
+        if (videoRawImage != null) videoRawImage.enabled = false;
         if (menuPanel != null) menuPanel.SetActive(false);
-        if (mainHUDPanel != null) mainHUDPanel.SetActive(true);
+
+        isPlayingVideo = false;
+
+        // Gọi vào game sau khi video xong
+        StartGameDirectly();
+    }
+
+    private void StartGameDirectly()
+    {
+        Debug.Log("[Menu] StartGameDirectly called");
 
         if (menuCam != null) menuCam.SetActive(false);
-        if (playerObj != null) playerObj.SetActive(true);
+        if (playerObj != null) playerObj.SetActive(true);   // bật player
+        if (mainHUDPanel != null) mainHUDPanel.SetActive(true); // bật HUD
 
-        // Khóa và ẩn chuột để xoay camera nhân vật
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        Debug.Log("[Menu] Game started!");
     }
 
     public void OnLoadGameClicked()
@@ -69,12 +141,10 @@ public class MainMenuController : MonoBehaviour
     public void OnQuitClicked()
     {
         PlaySound();
-        Debug.Log("Game Exiting...");
-
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+        Application.Quit();
 #endif
     }
 
