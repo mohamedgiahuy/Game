@@ -36,32 +36,75 @@ Material:
     - _BandDark: 0.35
     - _BandHeight: 0.08
     - _BandSpeed: 0.18
-    - _BleedAmount: 0.005
+    - _BlackLift: 0.166
+    - _BleedAmount: 0.009
+    - _BloomIntensity: 0.6
+    - _BloomRadiusPx: 10
+    - _BloomThreshold: 0.6
+    - _BlurAmount: 0.579
+    - _BlurRadius: 1.74
+    - _ChromaEdgeScale: 2
     - _ChromaticAberration: 0.03
+    - _ChromaticAmount: 0.01
     - _ChromaticShift: 0.01
     - _ColorBanding: 0.1
+    - _ColorBleed: 0.01263
+    - _ColorLevels: 8
+    - _Contrast: 0.973
     - _Distortion: 0.1
+    - _DitherStrength: 0.35
+    - _DropoutAmount: 0
+    - _DropoutBrightness: 1.3
+    - _DropoutDensity: 0.004
+    - _DropoutStrength: 0
+    - _Exposure: 1.5
     - _FisheyeBend: 0.2
+    - _GhostAmount: 0.0346
+    - _GhostOffset: 0.00369
     - _GlitchAmount: 0.05
-    - _GlitchBrightness: 0.38
+    - _GlitchBrightness: 0.04
     - _GlitchDensity: 0
     - _GlitchIntensity: 0.1
     - _GlitchLineLength: 0.5
     - _GlitchRowScale: 400
+    - _HeadSwitchHeight: 0.025
+    - _HeadSwitchJitter: 0.01
+    - _HeadSwitchStrength: 0.18
     - _HeavyGlitchActive: 0.1
     - _HeavyGlitchTime: 10
+    - _InterlaceAmount: 0.025
+    - _JitterSpeed: 11.2
+    - _JitterStrength: 0.0015
     - _MotionBlur: 0.3
-    - _NoiseAmount: 0.05
+    - _NoiseAmount: 0.1
     - _NoiseIntensity: 0.3
-    - _Saturation: 0.85
-    - _ScanlineCount: 240
-    - _ScanlineDark: 0.25
+    - _NoiseSpeed: 2.32
+    - _PixelFactor: 2
+    - _Pixelate: 0
+    - _Posterize: 0
+    - _Saturation: 1.814
+    - _ScanlineCount: 139
+    - _ScanlineDark: 0
     - _ScanlineFrequency: 200
     - _ScanlineIntensity: 0.5
     - _ScanlineSpeed: 0.4
+    - _ScanlineStrength: 0.06
+    - _ShakeAmount: 0.006
+    - _ShakeSpeed: 1.2
+    - _StaticBurstChance: 0.02
+    - _StaticBurstIntensity: 0.6
     - _TimeSpeed: 0.5
+    - _TintStrength: 0.098
+    - _TrackingHeight: 0.05
+    - _TrackingSpeed: 0.2
+    - _TrackingStrength: 0.035
     - _Vignette: 0.3
     - _VignetteAmount: 0.3
-    m_Colors: []
+    - _VignetteStrength: 1
+    - _WobbleStrength: 0.0015
+    m_Colors:
+    - _BloomTint: {r: 0.40881437, g: 0.050943315, b: 1, a: 1}
+    - _TintColor: {r: 0.95, g: 1.03, b: 0.9, a: 1}
+    - _WarmTint: {r: 0.7272968, g: 0.6773585, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
