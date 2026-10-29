@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Aero C++ IDE</title>
+
+<style>
+
+:root{--ink:#0b3a5c;--mute:#4d7a98;--glass:linear-gradient(180deg,rgba(255,255,255,.82),rgba(255,255,255,.42));--edge:rgba(255,255,255,.9)}
+
+*{box-sizing:border-box}
+
+html,body{margin:0;min-height:100%}
+
+body{font-family:"Segoe UI","Frutiger","Trebuchet MS",system-ui,sans-serif;color:var(--ink);
+
+background:linear-gradient(180deg,#2aa8f0 0%,#7fd3ff 38%,#d6f3ff 62%,#b8ecb0 100%) fixed;padding:14px;position:relative;overflow-x:hidden}
+
+.bub{position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+
+background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.95),rgba(255,255,255,.25) 35%,rgba(120,210,255,.18) 70%,rgba(255,255,255,.5));
+
+box-shadow:inset 0 0 18px rgba(255,255,255,.7),0 4px 14px rgba(0,110,190,.2)}
+
+.hill{position:fixed;left:-10%;right:-10%;bottom:-140px;height:260px;border-radius:50% 50% 0 0;z-index:0;pointer-events:none;
+
+background:radial-gradient(ellipse at 50% 0,#9be36b,#3fae3a 70%);box-shadow:0 -10px 40px rgba(255,255,255,.6)}
+
+.app{position:relative;z-index:1;max-width:1640px;margin:0 auto;display:grid;gap:14px;align-items:start;grid-template-columns:minmax(0,1fr) var(--side,460px)}
+
+header{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:10px 18px}
+
+h1{margin:0;font-size:22px;font-weight:600;letter-spacing:.2px;text-shadow:0 1px 0 #fff,0 0 12px rgba(255,255,255,.9)}
+
+.logo{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff,#7fe0ff 35%,#1495e0 75%);box-shadow:0 2px 8px rgba(0,100,180,.5),inset 0 -4px 8px rgba(0,60,140,.35);display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;text-shadow:0 1px 2px #0a5a9a}
+
+.spacer{flex:1}
+
+.panel{background:var(--glass);border:1px solid var(--edge);border-radius:16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+
+box-shadow:0 10px 32px rgba(0,90,160,.28),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(120,200,255,.5)}
+
+.ptitle{margin:0;padding:9px 14px;font-size:14px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.8);
+
+background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(190,235,255,.4));border-radius:16px 16px 0 0;display:flex;align-items:center;gap:8px}
+
+.col{display:grid;gap:14px;align-content:start;min-width:0}
+
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px}
+
+button,select,input[type=text]{font:inherit;font-size:14px}
+
+.btn{position:relative;overflow:hidden;border:1px solid #0a6fb5;border-radius:999px;padding:7px 18px;color:#fff;cursor:pointer;font-weight:600;
+
+text-shadow:0 -1px 0 rgba(0,60,110,.55);background:linear-gradient(180deg,#8fe0ff 0%,#2aa8f0 48%,#0f86d6 52%,#52c6f7 100%);
+
+box-shadow:0 3px 8px rgba(0,100,180,.4),inset 0 1px 1px rgba(255,255,255,.9)}
+
+.btn::before{content:"";position:absolute;left:6%;right:6%;top:2px;height:45%;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.1));pointer-events:none}
+
+.btn.go{border-color:#2a8a24;background:linear-gradient(180deg,#b5f08a 0%,#55c43a 48%,#2fa326 52%,#7fdc5a 100%);text-shadow:0 -1px 0 rgba(10,80,10,.6);box-shadow:0 3px 8px rgba(20,120,20,.4),inset 0 1px 1px rgba(255,255,255,.9)}
+
+.btn.mini{padding:3px 10px;font-size:12px;box-shadow:0 2px 5px rgba(0,100,180,.35),inset 0 1px 1px rgba(255,255,255,.9)}
+
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:translateY(1px)}.btn[disabled]{filter:grayscale(.7);cursor:wait}
+
+.btn:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,.tr:focus-visible{outline:3px solid #ffd54a;outline-offset:2px}
+
+select,input[type=text]{border:1px solid #7cc3ec;border-radius:999px;padding:6px 12px;background:linear-gradient(180deg,#fff,#e6f7ff);color:var(--ink);box-shadow:inset 0 2px 4px rgba(0,100,170,.15)}
+
+.ide{display:flex;gap:10px;height:430px;margin:0 12px 12px}
+
+.tree{flex:none;width:210px;display:flex;flex-direction:column;border:1px solid #7cc3ec;border-radius:10px;background:linear-gradient(180deg,#f4fbff,#dcf2ff);overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,100,170,.15)}
+
+.tb{display:flex;flex-wrap:wrap;gap:4px;padding:6px;border-bottom:1px solid #bfe3f7;background:linear-gradient(180deg,#fff,#e4f6ff)}
+
+#tree{flex:1;overflow:auto;padding:4px}
+
+.tr{display:flex;align-items:center;gap:5px;padding:3px 6px;border-radius:7px;cursor:pointer;white-space:nowrap;font-size:13px}
+
+.tr:hover{background:rgba(255,255,255,.85)}.tr.sel{background:#cfeeff}
+
+.tr.cur{background:linear-gradient(180deg,#fff,#aee3ff);font-weight:600}
+
+.editor{display:flex;flex:1;min-width:0;border:1px solid #7cc3ec;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.92);box-shadow:inset 0 2px 8px rgba(0,100,170,.2)}
+
+.gut{padding:10px 8px;min-width:46px;text-align:right;color:#6aa5c8;background:linear-gradient(90deg,#d9f1ff,#eef9ff);border-right:1px solid #bfe3f7;overflow:hidden;user-select:none}
+
+.gut,textarea.code,.hl{font:14px/1.55 Consolas,"Cascadia Mono","Courier New",monospace;white-space:pre}
+
+.ed{position:relative;flex:1;min-width:0}
+
+.hl,textarea.code{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:10px;border:0;tab-size:4;overflow:auto}
+
+.hl{pointer-events:none;overflow:hidden;color:#06324f}
+
+textarea.code{color:transparent;caret-color:#06324f;background:transparent;resize:none;z-index:1;outline-offset:-3px}
+
+textarea.code::selection{background:rgba(42,168,240,.3)}
+
+.hl .kw{color:#0a5fd0;font-weight:600}.hl .ty{color:#0f8a8a}.hl .st{color:#c2410c}.hl .nu{color:#7c3aed}
+
+.hl .cm{color:#5f8f5f;font-style:italic}.hl .pp{color:#b0307a}.hl .fn{color:#9a5b00}
+
+.tabs{display:flex;gap:6px;padding:8px 12px 0}
+
+.tab,.stab{border:1px solid #9bd2f0;border-bottom:0;border-radius:10px 10px 0 0;padding:6px 14px;cursor:pointer;background:linear-gradient(180deg,#f2fbff,#cdeeff);color:var(--mute)}
+
+.tab[aria-selected=true],.stab[aria-selected=true]{background:#fff;color:var(--ink);font-weight:600}
+
+.pane{margin:0 12px 12px;border:1px solid #9bd2f0;border-radius:0 10px 10px 10px;background:#fff}
+
+pre.out,textarea.inp{margin:0;width:100%;height:170px;padding:10px;border:0;border-radius:inherit;font:13px/1.5 Consolas,"Courier New",monospace;overflow:auto;white-space:pre-wrap;color:#06324f;background:transparent;resize:none}
+
+.err{color:#b3261e}.ok{color:#1d7a1d}
+
+.status{font-size:13px;padding:0 4px;color:var(--mute)}
+
+.pad{padding:12px}
+
+.vid{aspect-ratio:16/9;width:100%;border:0;border-radius:10px;background:linear-gradient(180deg,#bfe9ff,#7fc8f0);display:block;box-shadow:0 4px 14px rgba(0,90,160,.35)}
+
+audio{width:100%;margin-top:8px}
+
+.row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+
+.row input[type=text]{flex:1;min-width:0}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+.chip{border:1px solid #9bd2f0;border-radius:999px;background:linear-gradient(180deg,#fff,#d9f2ff);padding:3px 11px;font-size:12px;cursor:pointer;color:var(--ink)}
+
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+
+.kpi{background:linear-gradient(180deg,#fff,#dff4ff);border:1px solid #b5e0f7;border-radius:12px;padding:8px 10px;box-shadow:inset 0 1px 0 #fff}
+
+.kpi b{display:block;font-size:22px}.kpi span{font-size:12px;color:var(--mute)}
+
+.chart{display:flex;align-items:flex-end;gap:6px;height:96px;margin-top:10px;padding:6px;border-radius:10px;background:linear-gradient(180deg,#f4fbff,#d4efff);border:1px solid #b5e0f7}
+
+.chart .c{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10px;color:var(--mute)}
+
+.chart .c i{display:block;width:100%;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#8fe0ff,#1495e0);box-shadow:inset 0 1px 0 #fff;min-height:2px}
+
+.chart.h{gap:2px;height:60px}.chart.h .c i{background:linear-gradient(180deg,#b5f08a,#2fa326)}
+
+.cap{font-size:12px;color:var(--mute);margin:10px 0 0}
+
+.app.nosb{grid-template-columns:minmax(0,1fr)}
+
+.app.nosb aside{position:fixed;left:-9999px;top:0;width:460px}
+
+aside.side{position:sticky;top:14px;max-height:calc(100vh - 28px);display:flex;flex-direction:column;overflow:hidden}
+
+.side .body{position:relative;flex:1;min-height:0;overflow:auto;margin:0 12px 12px;padding:12px;border:1px solid #9bd2f0;border-radius:0 10px 10px 10px;background:rgba(255,255,255,.72)}
+
+.tp.off{position:absolute;left:0;right:0;top:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
+
+.chip.on{background:linear-gradient(180deg,#8fe0ff,#1495e0);color:#fff;border-color:#0a6fb5}
+
+.chip span{opacity:.7;margin-left:3px}.chip span:hover{opacity:1}
+
+.doc{margin-top:10px;border:1px solid #9bd2f0;border-radius:10px;background:#fff;height:min(66vh,680px);overflow:auto}
+
+.doc iframe{width:100%;height:100%;border:0;display:block}
+
+.doc img{max-width:100%;display:block;margin:0 auto}
+
+.md{padding:12px 14px;line-height:1.6;font-size:14px;color:#06324f}
+
+.md h1,.md h2,.md h3{margin:.7em 0 .3em;line-height:1.25}
+
+.md pre{background:#eef8ff;padding:8px 10px;border-radius:8px;overflow:auto;white-space:pre-wrap;font:13px/1.5 Consolas,"Courier New",monospace;margin:.5em 0}
+
+.md code{background:#eaf6ff;padding:0 4px;border-radius:4px;font-family:Consolas,monospace}
+
+a.btn{text-decoration:none;display:inline-block}
+
+@media(max-width:980px){.app{grid-template-columns:1fr}aside.side{position:static;max-height:none}.side .body{overflow:visible}.ide{flex-direction:column;height:auto}.tree{width:auto;height:170px}.editor{height:320px;flex:none}}
+
+@media(prefers-reduced-motion:no-preference){.bub{animation:fl 9s ease-in-out infinite alternate}@keyframes fl{to{transform:translateY(-26px)}}}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="bub" style="width:120px;height:120px;left:6%;top:18%"></div>
+
+<div class="bub" style="width:60px;height:60px;left:42%;top:8%;animation-delay:-3s"></div>
+
+<div class="bub" style="width:90px;height:90px;right:4%;top:55%;animation-delay:-5s"></div>
+
+<div class="bub" style="width:40px;height:40px;left:22%;top:70%;animation-delay:-2s"></div>
+
+<div class="hill"></div>
+
+
+
+<div class="app" id="app">
+
+<header class="panel">
+
+  <div class="logo">C++</div>
+
+  <h1>Aero C++ IDE</h1>
+
+  <span class="spacer"></span>
+
+  <span class="status" id="clock"></span>
+
+  <button class="btn mini" id="bw" title="Đổi độ rộng bảng phụ">⇔ Vừa</button>
+
+  <button class="btn mini" id="bh" title="Ẩn bảng phụ để tập trung code, nhạc vẫn phát">Ẩn bảng phụ</button>
+
+</header>
+
+
+
+<main class="col">
+
+  <section class="panel">
+
+    <h2 class="ptitle" id="fname">main.cpp</h2>
+
+    <div class="bar">
+
+      <button class="btn go" id="run">▶ Biên dịch &amp; chạy</button>
+
+      <select id="compiler" aria-label="Trình biên dịch">
+
+        <option value="gcc-head">GCC (mới nhất)</option>
+
+        <option value="clang-head">Clang (mới nhất)</option>
+
+      </select>
+
+      <select id="std" aria-label="Chuẩn C++">
+
+        <option>c++11</option><option>c++14</option><option>c++17</option><option selected>c++20</option><option>c++2b</option>
+
+      </select>
+
+      <span class="status" id="status">Sẵn sàng. Ctrl+Enter để chạy, Ctrl+S để lưu về máy.</span>
+
+    </div>
+
+    <div class="ide">
+
+      <div class="tree">
+
+        <div class="tb">
+
+          <button class="btn mini" id="bnf" title="Tạo tệp mới">+ Tệp</button>
+
+          <button class="btn mini" id="bnd" title="Tạo thư mục mới">+ Thư mục</button>
+
+          <button class="btn mini" id="brn" title="Đổi tên mục đang chọn">Đổi tên</button>
+
+          <button class="btn mini" id="bdel" title="Xóa mục đang chọn">Xóa</button>
+
+          <button class="btn mini" id="bup" title="Mở tệp từ máy">Mở tệp</button>
+
+          <button class="btn mini" id="bupd" title="Mở cả thư mục từ máy">Mở thư mục</button>
+
+          <button class="btn mini go" id="bsave" title="Lưu tệp đang mở về máy">Lưu tệp</button>
+
+          <button class="btn mini go" id="bzip" title="Tải cả dự án dạng .zip">Tải .zip</button>
+
+        </div>
+
+        <div id="tree" role="tree" aria-label="Cây thư mục"></div>
+
+        <input type="file" id="up" multiple hidden>
+
+        <input type="file" id="updir" webkitdirectory hidden>
+
+      </div>
+
+      <div class="editor">
+
+        <div class="gut" id="gut">1</div>
+
+        <div class="ed"><pre class="hl" id="hl" aria-hidden="true"></pre><textarea class="code" id="code" spellcheck="false" wrap="off" aria-label="Mã nguồn"></textarea></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <section class="panel">
+
+    <div class="tabs" role="tablist">
+
+      <button class="tab" role="tab" aria-selected="true" data-p="out">Kết quả</button>
+
+      <button class="tab" role="tab" aria-selected="false" data-p="inp">Đầu vào (stdin)</button>
+
+    </div>
+
+    <div class="pane" id="p-out"><pre class="out" id="out">Chưa có kết quả. Nhấn “Biên dịch &amp; chạy”.</pre></div>
+
+    <div class="pane" id="p-inp" hidden><textarea class="inp" id="stdin" placeholder="Nhập dữ liệu cho cin, mỗi giá trị cách nhau bằng dấu cách hoặc xuống dòng"></textarea></div>
+
+  </section>
+
+</main>
+
+
+
+<aside class="panel side" id="side">
+
+  <div class="tabs" role="tablist">
+
+    <button class="stab" role="tab" data-t="m" aria-selected="true">♪ Nhạc &amp; video</button>
+
+    <button class="stab" role="tab" data-t="d" aria-selected="false">📋 Đề bài</button>
+
+    <button class="stab" role="tab" data-t="s" aria-selected="false">📊 Thống kê</button>
+
+  </div>
+
+  <div class="body">
+
+    <div class="tp" id="tp-m">
+
+      <iframe class="vid" id="yt" title="Trình phát YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen hidden></iframe>
+
+      <video class="vid" id="vid" controls playsinline preload="metadata" hidden></video>
+      <audio id="au" controls hidden></audio>
+
+      <div class="row">
+
+        <input type="text" id="url" placeholder="Link YouTube hoặc link nhạc .mp3" aria-label="Link phát">
+
+        <button class="btn" id="play">Phát</button>
+
+      </div>
+
+      <div class="row"><input type="file" id="file" accept="audio/*,video/*" aria-label="Chọn tệp nhạc từ máy"></div>
+
+      <div class="chips" id="chips"></div>
+
+      <p class="cap" id="mstat">Dán link để bắt đầu nghe nhạc trong lúc code. Bấm “Ẩn bảng phụ” ở trên để code toàn màn hình, nhạc vẫn phát.</p>
+
+    </div>
+
+    <div class="tp off" id="tp-d">
+
+      <div class="row" style="margin-top:0">
+
+        <input type="text" id="durl" placeholder="Dán link đề (PDF, ảnh, .md, .txt, Google Drive…)" aria-label="Link đề bài">
+
+        <button class="btn" id="dopen">Mở</button>
+
+      </div>
+
+      <div class="row">
+
+        <button class="btn" id="dfile">Tải tệp đề</button>
+
+        <a class="btn mini" id="dtab" target="_blank" rel="noopener" hidden>Mở tab mới ↗</a>
+
+        <input type="file" id="dfi" multiple accept=".pdf,.txt,.md,.png,.jpg,.jpeg,.gif,.webp,.svg" hidden>
+
+      </div>
+
+      <div class="chips" id="dlist"></div>
+
+      <div class="doc" id="doc"></div>
+
+      <p class="cap">Link được lưu lại. Tệp tải lên chỉ giữ trong phiên này. Một số trang web chặn việc nhúng, khi đó dùng “Mở tab mới”.</p>
+
+    </div>
+
+    <div class="tp off" id="tp-s">
+
+      <div class="kpis">
+
+        <div class="kpi"><b id="k1">0</b><span>Phím gõ hôm nay</span></div>
+
+        <div class="kpi"><b id="k2">0</b><span>Phút hoạt động</span></div>
+
+        <div class="kpi"><b id="k3">0</b><span>Lần chạy (thành công)</span></div>
+
+        <div class="kpi"><b id="k4">0</b><span>Ngày liên tiếp</span></div>
+
+      </div>
+
+      <p class="cap">Phím gõ 7 ngày gần nhất</p>
+
+      <div class="chart" id="c7"></div>
+
+      <p class="cap">Theo giờ trong hôm nay</p>
+
+      <div class="chart h" id="c24"></div>
+
+      <div class="row"><button class="btn" id="reset">Xóa thống kê</button></div>
+
+      <p class="cap">Dữ liệu chỉ lưu trong trình duyệt của bạn.</p>
+
+    </div>
+
+  </div>
+
+</aside>
+
+</div>
+
+
+
+<script>
+
+const $=id=>document.getElementById(id);
+
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+const DEFAULT=`#include <iostream>
+
+#include <string>
+
+using namespace std;
+
+
+
+int main() {
+
+    string ten = "ban";
+
+    string nhap;
+
+    cout << "Nhap ten cua ban (Enter de dung ten mac dinh): ";
+
+    getline(cin, nhap);
+
+    if (!nhap.empty()) ten = nhap;
+
+    cout << "Hello, " << ten << "!" << endl;
+
+    return 0;
+
+}
+
+`;
+
+const code=$('code'),gut=$('gut'),hl=$('hl');
+
+
+
+*/* ---- Tô màu cú pháp ---- */*
+
+const KW=new Set('alignas alignof auto break case catch class const consteval constexpr constinit continue co_await co_return co_yield decltype default delete do else enum explicit export extern final for friend goto if inline mutable namespace new noexcept operator override private protected public requires return sizeof static static_assert struct switch template this throw try typedef typename union using virtual volatile while true false nullptr'.split(' '));
+
+const TY=new Set('bool char char8_t char16_t char32_t double float int long short signed unsigned void wchar_t size_t string vector map set unordered_map unordered_set pair array deque queue stack list cin cout cerr endl int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t'.split(' '));
+
+const RE=/(\/\/[^\n]*|\/\*[\s\S]*?(?:\*\/|(?![\s\S])))|(^[ \t]*#[^\n]*)|("(?:\.|[^"\n])*"?|'(?:\.|[^'\n])*'?)|(\b\d[\w.']*)|([A-Za-z_]\w*)(?=\s*\()|([A-Za-z_]\w*)/gm;
+
+function hi(src){
+
+  let o='',last=0,m;RE.lastIndex=0;
+
+  while((m=RE.exec(src))){
+
+    const t=m[0];o+=esc(src.slice(last,m.index));
+
+    let c=null;
+
+    if(m[1])c='cm';else if(m[2])c='pp';else if(m[3])c='st';else if(m[4])c='nu';
+
+    else{const w=m[5]||m[6];c=KW.has(w)?'kw':TY.has(w)?'ty':m[5]?'fn':null}
+
+    o+=c?'<span class="'+c+'">'+esc(t)+'</span>':esc(t);
+
+    last=m.index+t.length;
+
+  }
+
+  return o+esc(src.slice(last))+'\n';
+
+}
+
+const isCode=p=>/\.(c|cc|cpp|cxx|h|hh|hpp|hxx)$/i.test(p);
+
+const isSrc=p=>/\.(c|cc|cpp|cxx)$/i.test(p);
+
+
+
+*/* ---- Dự án: cây thư mục ---- */*
+
+let fs;try{fs=JSON.parse(store.get('aero.fs'))}catch(e){}
+
+if(!fs||!fs.files||!Object.keys(fs.files).length){fs={files:{'main.cpp':store.get('aero.code')||DEFAULT},dirs:[],cur:'main.cpp'}}
+
+if(fs.files[fs.cur]===undefined)fs.cur=Object.keys(fs.files)[0];
+
+fs.dirs=fs.dirs||[];
+
+const closed=new Set();let sel={t:'f',p:fs.cur};
+
+let ptmr;function persist(){clearTimeout(ptmr);ptmr=setTimeout(()=>store.set('aero.fs',JSON.stringify(fs)),300)}
+
+const dirOf=p=>p.includes('/')?p.slice(0,p.lastIndexOf('/')):'';
+
+const baseOf=p=>p.slice(p.lastIndexOf('/')+1);
+
+const okSeg=n=>/^[\w.\-]+$/.test(n)&&n!=='.'&&n!=='..';
+
+const okPath=p=>p.split('/').every(okSeg);
+
+
+
+function lines(){
+
+  const n=code.value.split('\n').length;
+
+  gut.textContent=Array.from({length:n},(_,i)=>i+1).join('\n');
+
+  hl.innerHTML=isCode(fs.cur)?hi(code.value):esc(code.value)+'\n';
+
+}
+
+function sync(){fs.files[fs.cur]=code.value;persist()}
+
+function openFile(p){
+
+  sync();fs.cur=p;code.value=fs.files[p];code.scrollTop=0;lines();
+
+  $('fname').textContent=p;persist();renderTree();
+
+}
+
+function allDirs(){
+
+  const d=new Set(fs.dirs);
+
+  for(const p in fs.files){const a=p.split('/');for(let i=1;i<a.length;i++)d.add(a.slice(0,i).join('/'))}
+
+  return d;
+
+}
+
+function renderTree(){
+
+  const D=allDirs(),rows=[];
+
+  const walk=(pre,depth)=>{
+
+    const pf=pre?pre+'/':'';
+
+    const ds=[...D].filter(x=>x.startsWith(pf)&&!x.slice(pf.length).includes('/')).sort();
+
+    const fl=Object.keys(fs.files).filter(x=>x.startsWith(pf)&&!x.slice(pf.length).includes('/')).sort();
+
+    for(const d of ds){rows.push({t:'d',p:d,depth,name:d.slice(pf.length)});if(!closed.has(d))walk(d,depth+1)}
+
+    for(const f of fl)rows.push({t:'f',p:f,depth,name:f.slice(pf.length)});
+
+  };
+
+  walk('',0);
+
+  $('tree').innerHTML=rows.map(r=>{
+
+    const cls='tr'+(r.t==='f'&&r.p===fs.cur?' cur':'')+(sel&&sel.p===r.p&&sel.t===r.t?' sel':'');
+
+    const ic=r.t==='d'?(closed.has(r.p)?'▸ 📁':'▾ 📂'):'📄';
+
+    return '<div class="'+cls+'" role="treeitem" tabindex="0" data-t="'+r.t+'" data-p="'+r.p+'" style="padding-left:'+(6+r.depth*14)+'px">'+ic+' '+esc(r.name)+'</div>';
+
+  }).join('');
+
+}
+
+function pick(el){
+
+  const t=el.dataset.t,p=el.dataset.p;sel={t,p};
+
+  if(t==='d'){if(closed.has(p))closed.delete(p);else closed.add(p);renderTree()}
+
+  else openFile(p);
+
+}
+
+$('tree').addEventListener('click',e=>{const el=e.target.closest('.tr');if(el)pick(el)});
+
+$('tree').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const el=e.target.closest('.tr');if(el){e.preventDefault();pick(el)}}});
+
+const selDir=()=>sel?(sel.t==='d'?sel.p:dirOf(sel.p)):dirOf(fs.cur);
+
+const join=(d,n)=>d?d+'/'+n:n;
+
+function bad(msg){$('status').innerHTML='<span class="err">'+msg+'</span>'}
+
+
+
+$('bnf').onclick=()=>{
+
+  const n=(prompt('Tên tệp mới (ví dụ util.h):','')||'').trim();if(!n)return;
+
+  const p=join(selDir(),n);
+
+  if(!okPath(p))return bad('Tên chỉ gồm chữ, số, dấu chấm, gạch dưới, gạch ngang.');
+
+  if(fs.files[p]!==undefined)return bad('Tệp đã tồn tại.');
+
+  fs.files[p]=isCode(p)&&/\.(h|hh|hpp|hxx)$/i.test(p)?'#pragma once\n\n':'';
+
+  sel={t:'f',p};openFile(p);
+
+};
+
+$('bnd').onclick=()=>{
+
+  const n=(prompt('Tên thư mục mới:','')||'').trim();if(!n)return;
+
+  const p=join(selDir(),n);
+
+  if(!okPath(p))return bad('Tên chỉ gồm chữ, số, dấu chấm, gạch dưới, gạch ngang.');
+
+  if(allDirs().has(p)||fs.files[p]!==undefined)return bad('Tên này đã tồn tại.');
+
+  fs.dirs.push(p);closed.delete(selDir());sel={t:'d',p};persist();renderTree();
+
+};
+
+$('brn').onclick=()=>{
+
+  if(!sel)return;
+
+  const old=sel.p,n=(prompt('Tên mới:',baseOf(old))||'').trim();
+
+  if(!n||n===baseOf(old))return;
+
+  if(!okSeg(n))return bad('Tên không hợp lệ.');
+
+  const np=join(dirOf(old),n);
+
+  if(allDirs().has(np)||fs.files[np]!==undefined)return bad('Tên này đã tồn tại.');
+
+  sync();
+
+  if(sel.t==='f'){
+
+    fs.files[np]=fs.files[old];delete fs.files[old];if(fs.cur===old)fs.cur=np;
+
+  }else{
+
+    for(const f of Object.keys(fs.files))if(f.startsWith(old+'/')){const g=np+f.slice(old.length);fs.files[g]=fs.files[f];delete fs.files[f];if(fs.cur===f)fs.cur=g}
+
+    fs.dirs=fs.dirs.map(d=>d===old?np:d.startsWith(old+'/')?np+d.slice(old.length):d);
+
+  }
+
+  sel={t:sel.t,p:np};$('fname').textContent=fs.cur;persist();renderTree();
+
+};
+
+$('bdel').onclick=()=>{
+
+  if(!sel||!confirm('Xóa “'+sel.p+'”? Không thể hoàn tác.'))return;
+
+  if(sel.t==='f')delete fs.files[sel.p];
+
+  else{for(const f of Object.keys(fs.files))if(f.startsWith(sel.p+'/'))delete fs.files[f];fs.dirs=fs.dirs.filter(d=>d!==sel.p&&!d.startsWith(sel.p+'/'))}
+
+  if(!Object.keys(fs.files).length)fs.files['main.cpp']='';
+
+  if(fs.files[fs.cur]===undefined)fs.cur=Object.keys(fs.files).sort()[0];
+
+  sel={t:'f',p:fs.cur};code.value=fs.files[fs.cur];$('fname').textContent=fs.cur;lines();persist();renderTree();
+
+};
+
+
+
+*/* ---- Lưu về máy / mở từ máy ---- */*
+
+function download(blob,name){
+
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+
+}
+
+function saveFile(){sync();download(new Blob([code.value],{type:'text/plain;charset=utf-8'}),baseOf(fs.cur));$('status').textContent='Đã lưu '+baseOf(fs.cur)+' vào thư mục tải xuống.'}
+
+let crcT;
+
+function crc32(u8){
+
+  if(!crcT){crcT=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;crcT[n]=c>>>0}}
+
+  let r=-1;for(let i=0;i<u8.length;i++)r=crcT[(r^u8[i])&255]^(r>>>8);return(r^-1)>>>0;
+
+}
+
+function makeZip(entries){
+
+  const enc=new TextEncoder(),parts=[],cent=[];let off=0;
+
+  for(const e of entries){
+
+    const nm=enc.encode(e.name),crc=crc32(e.data),sz=e.data.length;
+
+    const lh=new DataView(new ArrayBuffer(30));
+
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(12,0x21,true);
+
+    lh.setUint32(14,crc,true);lh.setUint32(18,sz,true);lh.setUint32(22,sz,true);lh.setUint16(26,nm.length,true);
+
+    parts.push(new Uint8Array(lh.buffer),nm,e.data);
+
+    const ch=new DataView(new ArrayBuffer(46));
+
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(14,0x21,true);
+
+    ch.setUint32(16,crc,true);ch.setUint32(20,sz,true);ch.setUint32(24,sz,true);ch.setUint16(28,nm.length,true);ch.setUint32(42,off,true);
+
+    cent.push(new Uint8Array(ch.buffer),nm);
+
+    off+=30+nm.length+sz;
+
+  }
+
+  let csz=0;for(const c of cent)csz+=c.length;
+
+  const end=new DataView(new ArrayBuffer(22));
+
+  end.setUint32(0,0x06054b50,true);end.setUint16(8,entries.length,true);end.setUint16(10,entries.length,true);end.setUint32(12,csz,true);end.setUint32(16,off,true);
+
+  return new Blob([...parts,...cent,new Uint8Array(end.buffer)],{type:'application/zip'});
+
+}
+
+function saveZip(){
+
+  sync();const enc=new TextEncoder();
+
+  download(makeZip(Object.keys(fs.files).sort().map(p=>({name:p,data:enc.encode(fs.files[p])}))),'aero-project.zip');
+
+  $('status').textContent='Đã tải aero-project.zip.';
+
+}
+
+async function importFiles(list,useRel){
+
+  let first=null,n=0;
+
+  for(const f of list){
+
+    if(f.size>300000){bad('Bỏ qua '+f.name+' vì lớn hơn 300 KB.');continue}
+
+    let p=useRel&&f.webkitRelativePath?f.webkitRelativePath:join(selDir(),f.name);
+
+    if(!okPath(p)){bad('Bỏ qua '+f.name+' vì tên không hợp lệ.');continue}
+
+    if(fs.files[p]!==undefined&&!confirm('Ghi đè “'+p+'”?'))continue;
+
+    fs.files[p]=await f.text();first=first||p;n++;
+
+  }
+
+  if(first){sel={t:'f',p:first};openFile(first);$('status').textContent='Đã mở '+n+' tệp.'}
+
+}
+
+$('bsave').onclick=saveFile;$('bzip').onclick=saveZip;
+
+$('bup').onclick=()=>$('up').click();$('bupd').onclick=()=>$('updir').click();
+
+$('up').onchange=e=>{importFiles([...e.target.files],false);e.target.value=''};
+
+$('updir').onchange=e=>{importFiles([...e.target.files],true);e.target.value=''};
+
+
+
+*/* ---- Trình soạn thảo ---- */*
+
+code.value=fs.files[fs.cur];$('fname').textContent=fs.cur;
+
+code.addEventListener('scroll',()=>{gut.scrollTop=hl.scrollTop=code.scrollTop;hl.scrollLeft=code.scrollLeft});
+
+code.addEventListener('input',()=>{lines();sync()});
+
+code.addEventListener('keydown',e=>{
+
+  if(e.key==='Tab'){e.preventDefault();code.setRangeText('    ',code.selectionStart,code.selectionEnd,'end');lines();sync()}
+
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();run();return}
+
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveFile();return}
+
+  if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&(e.key.length===1||['Enter','Backspace','Delete','Tab'].includes(e.key)))track();
+
+});
+
+lines();renderTree();
+
+
+
+*/* ---- Thống kê ---- */*
+
+const dayKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+
+let stats;try{stats=JSON.parse(store.get('aero.stats'))}catch(e){}
+
+stats=stats&&stats.days?stats:{days:{}};
+
+let lastMin=-1;
+
+function today(){const k=dayKey(new Date());return stats.days[k]||(stats.days[k]={keys:0,runs:0,ok:0,mins:0,hours:Array(24).fill(0)})}
+
+function track(){
+
+  const d=new Date(),t=today();t.keys++;t.hours[d.getHours()]++;
+
+  const m=Math.floor(d/60000);if(m!==lastMin){lastMin=m;t.mins++}
+
+  saveStats();
+
+}
+
+let tmr;function saveStats(){clearTimeout(tmr);tmr=setTimeout(()=>{store.set('aero.stats',JSON.stringify(stats));render()},400)}
+
+function bars(el,vals,labels){
+
+  const max=Math.max(1,...vals);
+
+  el.innerHTML=vals.map((v,i)=>`<div class="c" title="${labels[i]}: ${v}"><i style="height:${Math.round(v/max*100)}%"></i>${el.classList.contains('h')?'':labels[i]}</div>`).join('');
+
+}
+
+function render(){
+
+  const t=today(),now=new Date();
+
+  $('k1').textContent=t.keys.toLocaleString('vi-VN');$('k2').textContent=t.mins;
+
+  $('k3').textContent=t.runs+' ('+t.ok+')';
+
+  let streak=0;for(let i=0;i<365;i++){const d=new Date(now);d.setDate(d.getDate()-i);const x=stats.days[dayKey(d)];if(x&&x.keys>0)streak++;else if(i>0)break}
+
+  $('k4').textContent=streak;
+
+  const v=[],l=[];for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const x=stats.days[dayKey(d)];v.push(x?x.keys:0);l.push(d.getDate()+'/'+(d.getMonth()+1))}
+
+  bars($('c7'),v,l);bars($('c24'),t.hours,t.hours.map((_,i)=>i+'h'));
+
+}
+
+$('reset').onclick=()=>{if(confirm('Xóa toàn bộ thống kê?')){stats={days:{}};store.set('aero.stats',JSON.stringify(stats));render()}};
+
+render();
+
+setInterval(()=>{$('clock').textContent=new Date().toLocaleTimeString('vi-VN')},1000);
+
+
+
+*/* ---- Biên dịch qua Wandbox API ---- */*
+
+let busy=false;
+
+function entryPath(){
+
+  if(fs.files['main.cpp']!==undefined)return 'main.cpp';
+
+  if(isSrc(fs.cur))return fs.cur;
+
+  return Object.keys(fs.files).sort().find(isSrc)||null;
+
+}
+
+async function run(){
+
+  if(busy)return;
+
+  const btn=$('run'),out=$('out'),st=$('status');
+
+  sync();selectTab('out');
+
+  const entry=entryPath();
+
+  if(!entry){out.innerHTML='<span class="err">Dự án chưa có tệp .cpp để biên dịch. Hãy tạo main.cpp.</span>';return}
+
+  busy=true;btn.disabled=true;st.textContent='Đang biên dịch '+entry+'…';out.textContent='';
+
+  const others=Object.keys(fs.files).filter(p=>p!==entry);
+
+  const t=today();t.runs++;
+
+  try{
+
+    const res=await fetch('https\://wandbox.org/api/compile.json',{
+
+      method:'POST',headers:{'Content-Type':'application/json'},
+
+      body:JSON.stringify({
+
+        code:fs.files[entry],compiler:$('compiler').value,options:'warning,'+$('std').value,stdin:$('stdin').value,save:false,
+
+        codes:others.map(p=>({file:p,code:fs.files[p]})),
+
+        'compiler-option-raw':others.filter(isSrc).join('\n')
+
+      })
+
+    });
+
+    if(!res.ok)throw new Error('Máy chủ trả về mã '+res.status);
+
+    const d=await res.json();
+
+    const fix=s=>esc(s).replace(/prog\.(cc|cpp)/g,entry);
+
+    let html='';
+
+    if(d.compiler_error)html+='<span class="'+(String(d.status)==='0'?'':'err')+'">'+fix(d.compiler_error)+'</span>\n';
+
+    if(d.program_output)html+=esc(d.program_output);
+
+    if(d.program_error)html+='<span class="err">'+esc(d.program_error)+'</span>';
+
+    const ok=String(d.status)==='0';
+
+    if(ok)t.ok++;
+
+    out.innerHTML=html||'(Chương trình không in gì)';
+
+    st.innerHTML=ok?'<span class="ok">Chạy xong, mã thoát 0.</span>':'<span class="err">Lỗi hoặc mã thoát '+esc(String(d.status))+'.</span>';
+
+  }catch(e){
+
+    out.innerHTML='<span class="err">Không gọi được API biên dịch: '+esc(e.message)+'\nKiểm tra kết nối mạng rồi thử lại.</span>';
+
+    st.textContent='Không kết nối được.';
+
+  }
+
+  btn.disabled=false;busy=false;saveStats();
+
+}
+
+$('run').onclick=run;
+
+
+
+*/* ---- Tab ---- */*
+
+function selectTab(p){
+
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===p));
+
+  $('p-out').hidden=p!=='out';$('p-inp').hidden=p!=='inp';
+
+}
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>selectTab(b.dataset.p));
+
+
+
+*/* ---- Trình phát ---- */*
+
+const yt = $('yt');
+const au = $('au');
+const vid = $('vid');
+const ms = $('mstat');
+const PRESETS = [['Lo-fi hip hop', 'jfKfPfyJRdk'], ['Synthwave', '4xDzrJKXOOY']];
+$('chips').innerHTML = PRESETS.map(p => `<button class="chip" data-id="${p[1]}">${p[0]}</button>`).join('');
+document.querySelectorAll('#chips .chip').forEach(c => c.onclick = () => playYT({ v: c.dataset.id }, c.textContent));
+function parse(u) {
+  u = u.trim();
+  if (/^[\w-]{11}$/.test(u)) return { v: u };
+  const m = u.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);
+  const l = u.match(/[?&]list=([\w-]+)/);
+  if (m || l) return { v: m && m[1], list: l && l[1] };
+  return null;
+}
+function stopPlayers() {
+  au.pause(); vid.pause();
+  au.hidden = true; vid.hidden = true; yt.hidden = true;
+  au.removeAttribute('src'); vid.removeAttribute('src'); yt.removeAttribute('src');
+  au.load(); vid.load();
+}
+function playYT(o, name) {
+  stopPlayers();
+  if (!o.v && !o.list) { ms.textContent = 'Link YouTube không hợp lệ.'; return; }
+  const q = new URLSearchParams({ autoplay: '1', rel: '0' });
+  if (o.list) q.set('list', o.list);
+  const target = o.v ? `https://www.youtube-nocookie.com/embed/${o.v}` : 'https://www.youtube-nocookie.com/embed/videoseries';
+  yt.src = `${target}?${q.toString()}`;
+  yt.hidden = false;
+  ms.textContent = 'Đang mở: ' + (name || 'YouTube');
+}
+function playMedia(src, name, type = '') {
+  stopPlayers();
+  const isVideo = type.startsWith('video/') || /\.(mp4|webm|ogv|mov|m4v)(?:[?#].*)?$/i.test(src);
+  const player = isVideo ? vid : au;
+  player.src = src; player.hidden = false; player.load();
+  ms.textContent = 'Đang mở: ' + name;
+  player.play().catch(() => { ms.textContent = 'Đã tải trình phát. Nhấn nút Play để bắt đầu phát.'; });
+}
+$('play').onclick = () => {
+  const u = $('url').value.trim();
+  if (!u) { ms.textContent = 'Hãy dán một đường link trước.'; return; }
+  const y = parse(u);
+  if (y) { playYT(y); return; }
+  if (!/^https?:\/\//i.test(u)) { ms.textContent = 'Link không hợp lệ. Hãy dùng link YouTube hoặc link tệp media trực tiếp.'; return; }
+  if (!/\.(mp3|wav|ogg|m4a|aac|flac|mp4|webm|ogv|mov|m4v)(?:[?#].*)?$/i.test(u)) {
+    ms.textContent = 'Không nhận diện được định dạng tệp. Hãy dùng link trực tiếp đến tệp audio/video hoặc link YouTube.'; return;
+  }
+  playMedia(u, u.split('/').pop().split(/[?#]/)[0]);
+};
+$('url').addEventListener('keydown', e => { if (e.key === 'Enter') $('play').click(); });
+let localMediaUrl = null;
+$('file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  if (!f.type.startsWith('audio/') && !f.type.startsWith('video/')) {
+    ms.textContent = 'Tệp đã chọn không phải audio/video.'; e.target.value = ''; return;
+  }
+  if (localMediaUrl) URL.revokeObjectURL(localMediaUrl);
+  localMediaUrl = URL.createObjectURL(f);
+  playMedia(localMediaUrl, f.name, f.type);
+};
+
+const docs=[];let curDoc=-1;
+
+try{(JSON.parse(store.get('aero.doclinks'))||[]).forEach(l=>docs.push({name:l.name,kind:'link',src:l.url}))}catch(e){}
+
+const saveLinks=()=>store.set('aero.doclinks',JSON.stringify(docs.filter(d=>d.kind==='link').map(d=>({name:d.name,url:d.src}))));
+
+const extOf=u=>{const m=u.split(/[?#]/)[0].match(/\.(\w+)$/);return m?m[1].toLowerCase():''};
+
+function fixLink(u){
+
+  let m=u.match(/drive\.google\.com\/file\/d\/([\w-]+)/);if(m)return 'https\://drive.google.com/file/d/'+m[1]+'/preview';
+
+  m=u.match(/^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/(.+)$/);if(m)return 'https\://raw\.githubusercontent.com/'+m[1]+'/'+m[2];
+
+  return u;
+
+}
+
+function md(t){
+
+  return t.split('```').map((p,i)=>i%2?'<pre>'+esc(p.replace(/^[^\n]*\n/,''))+'</pre>':
+
+    esc(p).replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^## (.*)$/gm,'<h2>$1</h2>').replace(/^# (.*)$/gm,'<h1>$1</h1>')
+
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/^[-*] (.*)$/gm,'• $1').replace(/\n/g,'<br>').replace(/(<\/h[123]>)<br>/g,'$1')).join('');
+
+}
+
+const put=n=>$('doc').replaceChildren(n);
+
+function msg(t){const p=document.createElement('p');p.className='cap pad';p.textContent=t;put(p)}
+
+function frame(src){const f=document.createElement('iframe');f.title='Đề bài';f.src=src;put(f)}
+
+function pic(src){const i=document.createElement('img');i.alt='Đề bài';i.src=src;put(i)}
+
+function mdBox(h){const d=document.createElement('div');d.className='md';d.innerHTML=h;put(d)}
+
+const EMPTY='Chưa có đề. Tải tệp hoặc dán link để xem ngay cạnh trình soạn thảo.';
+
+function renderDocList(){
+
+  $('dlist').innerHTML=docs.map((d,i)=>'<button class="chip'+(i===curDoc?' on':'')+'" data-i="'+i+'">'+esc(d.name)+' <span data-x="1" title="Gỡ">×</span></button>').join('');
+
+}
+
+function showDoc(i){
+
+  curDoc=i;renderDocList();const d=docs[i],tab=$('dtab');tab.hidden=true;
+
+  if(!d)return msg(EMPTY);
+
+  if(d.kind==='pdf'){frame(d.src);tab.href=d.src;tab.hidden=false}
+
+  else if(d.kind==='img')pic(d.src);
+
+  else if(d.kind==='md')mdBox(md(d.text));
+
+  else if(d.kind==='txt')mdBox('<pre>'+esc(d.text)+'</pre>');
+
+  else{
+
+    tab.href=d.src;tab.hidden=false;const x=extOf(d.src);
+
+    if(/^(png|jpe?g|gif|webp|svg)$/.test(x))pic(d.src);
+
+    else if(x==='md'||x==='txt'){
+
+      msg('Đang tải…');
+
+      fetch(d.src).then(r=>{if(!r.ok)throw 0;return r.text()})
+
+        .then(t=>{if(curDoc===i)mdBox(x==='md'?md(t):'<pre>'+esc(t)+'</pre>')})
+
+        .catch(()=>{if(curDoc===i)frame(d.src)});
+
+    }else frame(d.src);
+
+  }
+
+}
+
+$('dlist').addEventListener('click',e=>{
+
+  const b=e.target.closest('.chip');if(!b)return;const i=+b.dataset.i;
+
+  if(e.target.dataset.x){
+
+    const d=docs[i];if(d.kind==='pdf'||d.kind==='img')URL.revokeObjectURL(d.src);
+
+    docs.splice(i,1);saveLinks();
+
+    showDoc(docs.length?(curDoc===i?Math.min(i,docs.length-1):curDoc>i?curDoc-1:curDoc):-1);
+
+  }else showDoc(i);
+
+});
+
+$('dopen').onclick=()=>{
+
+  const raw=$('durl').value.trim();
+
+  if(!/^https?:\/\//i.test(raw))return msg('Link không hợp lệ. Link cần bắt đầu bằng http\:// hoặc https\://');
+
+  const src=fixLink(raw);let name=src.split(/[?#]/)[0].split('/').filter(Boolean).pop()||src;
+
+  try{name=decodeURIComponent(name)}catch(e){}
+
+  docs.push({name:name.slice(0,28),kind:'link',src});saveLinks();$('durl').value='';showDoc(docs.length-1);
+
+};
+
+$('durl').addEventListener('keydown',e=>{if(e.key==='Enter')$('dopen').click()});
+
+$('dfile').onclick=()=>$('dfi').click();
+
+$('dfi').onchange=async e=>{
+
+  for(const f of e.target.files){
+
+    const x=extOf(f.name),d={name:f.name.slice(0,28)};
+
+    if(x==='pdf'){d.kind='pdf';d.src=URL.createObjectURL(f)}
+
+    else if(/^(png|jpe?g|gif|webp|svg)$/.test(x)){d.kind='img';d.src=URL.createObjectURL(f)}
+
+    else{d.kind=x==='md'?'md':'txt';d.text=await f.text()}
+
+    docs.push(d);
+
+  }
+
+  e.target.value='';if(docs.length)showDoc(docs.length-1);
+
+};
+
+renderDocList();msg(EMPTY);applyUi();
+
+</script>
+
+</body>
+
+</html>

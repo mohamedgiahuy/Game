@@ -1,0 +1,16 @@
+newmtl TallGrassPlant1Mtl
+Material Color
+Ka 0.0414519 0.0962661 0.0461488
+Kd 0.0414519 0.0962661 0.0461488
+Ks 0.0026009 0.00604023 0.00289561 
+
+d 1
+
+Ns 0
+
+map_Ka TallGrassPlant1_diff.png
+map_Kd TallGrassPlant1_diff.png
+map_d TallGrassPlant1_diff.png
+
+map_Bump TallGrassPlant1_nmap.png
+

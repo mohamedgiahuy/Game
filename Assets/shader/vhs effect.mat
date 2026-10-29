@@ -33,6 +33,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AnalogNoiseAmount: 0.025
     - _BandDark: 0.35
     - _BandHeight: 0.08
     - _BandSpeed: 0.18
@@ -41,16 +42,23 @@ Material:
     - _BloomIntensity: 0.6
     - _BloomRadiusPx: 10
     - _BloomThreshold: 0.6
-    - _BlurAmount: 0.615
-    - _BlurRadius: 1.88
+    - _BlurAmount: 0.213
+    - _BlurRadius: 0.73
+    - _CRTBorderDarkness: 0.01
+    - _CRTBorderWidth: 0.01
+    - _CRTCornerDarkness: 0.01
+    - _CRTCornerRadius: 0.01
+    - _CRTCurvature: 0.038
+    - _CRTMaskSoftness: 0.01
     - _ChromaEdgeScale: 2
     - _ChromaticAberration: 0.03
     - _ChromaticAmount: 0.01
     - _ChromaticShift: 0.01
     - _ColorBanding: 0.1
-    - _ColorBleed: 0.01263
+    - _ColorBleed: 0.0162
+    - _ColorFade: 0.12
     - _ColorLevels: 8
-    - _Contrast: 0.973
+    - _Contrast: 0.959
     - _Distortion: 0.1
     - _DitherStrength: 0.35
     - _DropoutAmount: 0
@@ -59,14 +67,20 @@ Material:
     - _DropoutStrength: 0
     - _Exposure: 1.5
     - _FisheyeBend: 0.2
+    - _FisheyeBlend: 0
+    - _FisheyeStrength: 0.026
+    - _FogIntensity: 0.25
     - _GhostAmount: 0.0346
     - _GhostOffset: 0.00369
     - _GlitchAmount: 0.05
+    - _GlitchBandHeight: 0.025
     - _GlitchBrightness: 0.04
     - _GlitchDensity: 0
+    - _GlitchFrequency: 1.5
     - _GlitchIntensity: 0.1
     - _GlitchLineLength: 0.5
     - _GlitchRowScale: 400
+    - _GlitchStrength: 0.006
     - _HeadSwitchHeight: 0.025
     - _HeadSwitchJitter: 0.01
     - _HeadSwitchStrength: 0.18
@@ -75,6 +89,7 @@ Material:
     - _InterlaceAmount: 0.025
     - _JitterSpeed: 11.2
     - _JitterStrength: 0.0015
+    - _LensDistortion: -0.027
     - _MotionBlur: 0.3
     - _NoiseAmount: 0.1
     - _NoiseIntensity: 0.3
@@ -82,7 +97,7 @@ Material:
     - _PixelFactor: 2
     - _Pixelate: 0
     - _Posterize: 0
-    - _Saturation: 1.814
+    - _Saturation: 1.2
     - _ScanlineCount: 139
     - _ScanlineDark: 0
     - _ScanlineFrequency: 200
@@ -104,7 +119,8 @@ Material:
     - _WobbleStrength: 0.0015
     m_Colors:
     - _BloomTint: {r: 0.40881437, g: 0.050943315, b: 1, a: 1}
+    - _FogColor: {r: 0.75, g: 0.8, b: 0.85, a: 1}
     - _TintColor: {r: 0.95, g: 1.03, b: 0.9, a: 1}
-    - _WarmTint: {r: 1, g: 1, b: 1, a: 1}
+    - _WarmTint: {r: 0.86240655, g: 0.9622642, b: 0.9432437, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
